@@ -1,0 +1,115 @@
+<!doctype html>
+
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <title>Dispositivos Móveis</title>
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    </head>
+
+    <body>
+        <header>
+            <h1>Dispositivos Móveis</h1>
+
+            <nav>
+                <a href="/"> Início </a>
+
+                <a href="/usuario"> Novo usuário </a>
+
+                <a href="/solicitacao"> Nova solicitação </a>
+            </nav>
+        </header>
+
+        <main>
+            <section class="titulo">
+                <h2>Sistema de Solicitações</h2>
+
+                <p>Gerenciamento baseado no modelo conceitual do projeto.</p>
+            </section>
+
+            <section class="cards">
+                <div class="card">
+                    <span> Usuários </span>
+
+                    <strong> {{ usuarios|length }} </strong>
+                </div>
+
+                <div class="card">
+                    <span> Categorias </span>
+
+                    <strong> {{ categorias|length }} </strong>
+                </div>
+
+                <div class="card">
+                    <span> Solicitações </span>
+
+                    <strong> {{ solicitacoes|length }} </strong>
+                </div>
+            </section>
+
+            <section class="painel">
+                <div class="cabecalho">
+                    <h2>Solicitações cadastradas</h2>
+
+                    <a href="/solicitacao" class="botao"> + Nova solicitação </a>
+                </div>
+
+                {% if solicitacoes %}
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+
+                            <th>Usuário</th>
+
+                            <th>Categoria</th>
+
+                            <th>Descrição</th>
+
+                            <th>Localização</th>
+
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for solicitacao in solicitacoes %}
+
+                        <tr>
+                            <td>{{ solicitacao.id_solicitacao }}</td>
+
+                            <td>{{ solicitacao.usuario.nome }}</td>
+
+                            <td>{{ solicitacao.categoria.nome_categoria }}</td>
+
+                            <td>{{ solicitacao.descricao }}</td>
+
+                            <td>{{ solicitacao.localizacao }}</td>
+
+                            <td>
+                                <span class="status"> {{ solicitacao.status }} </span>
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                {% else %}
+
+                <div class="vazio">
+                    <h3>Nenhuma solicitação cadastrada.</h3>
+
+                    <p>Cadastre uma solicitação para começar.</p>
+                </div>
+
+                {% endif %}
+            </section>
+        </main>
+    </body>
+</html>

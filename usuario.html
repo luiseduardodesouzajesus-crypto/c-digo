@@ -1,0 +1,61 @@
+<!doctype html>
+
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8" />
+
+        <title>Novo usuário</title>
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    </head>
+
+    <body>
+        <header>
+            <h1>Dispositivos Móveis</h1>
+
+            <nav>
+                <a href="/"> Início </a>
+            </nav>
+        </header>
+
+        <main>
+            <section class="formulario">
+                <h2>Cadastrar usuário</h2>
+
+                <p>Preencha os dados presentes na entidade Usuário do modelo conceitual.</p>
+
+                <form method="POST">
+                    <label> Nome </label>
+
+                    <input type="text" name="nome" required />
+
+                    <label> Telefone </label>
+
+                    <input type="text" name="telefone" />
+
+                    <label> Cidade </label>
+
+                    <input type="text" name="cidade" />
+
+                    <label> E-mail </label>
+
+                    <input type="email" name="email" required />
+
+                    <label> Senha </label>
+
+                    <input type="password" name="senha" required />
+
+                    <label> Tipo de usuário </label>
+
+                    <select name="tipo_usuario">
+                        <option value="usuario">Usuário</option>
+
+                        <option value="voluntario">Voluntário</option>
+                    </select>
+
+                    <button type="submit">Salvar usuário</button>
+                </form>
+            </section>
+        </main>
+    </body>
+</html>
