@@ -1,115 +1,112 @@
 <!doctype html>
-
 <html lang="pt-BR">
     <head>
         <meta charset="UTF-8" />
-
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
         <title>Dispositivos Móveis</title>
-
-        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
     </head>
 
     <body>
-        <header>
-            <h1>Dispositivos Móveis</h1>
+        <h1>Dispositivos Móveis</h1>
 
-            <nav>
-                <a href="/"> Início </a>
+        <nav>
+            <a href="/">Início</a> | <a href="/usuario">Novo usuário</a> |
+            <a href="/solicitacao">Nova solicitação</a>
+        </nav>
 
-                <a href="/usuario"> Novo usuário </a>
+        <hr />
 
-                <a href="/solicitacao"> Nova solicitação </a>
-            </nav>
-        </header>
+        <h2>Resumo</h2>
 
-        <main>
-            <section class="titulo">
-                <h2>Sistema de Solicitações</h2>
+        <p>Usuários: {{ usuarios|length }}</p>
+        <p>Categorias: {{ categorias|length }}</p>
+        <p>Solicitações: {{ solicitacoes|length }}</p>
 
-                <p>Gerenciamento baseado no modelo conceitual do projeto.</p>
-            </section>
+        <hr />
 
-            <section class="cards">
-                <div class="card">
-                    <span> Usuários </span>
+        <h2>Usuários</h2>
 
-                    <strong> {{ usuarios|length }} </strong>
-                </div>
+        {% if usuarios %}
 
-                <div class="card">
-                    <span> Categorias </span>
+        <table border="1">
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Ações</th>
+            </tr>
 
-                    <strong> {{ categorias|length }} </strong>
-                </div>
+            {% for usuario in usuarios %}
 
-                <div class="card">
-                    <span> Solicitações </span>
+            <tr>
+                <td>{{ usuario.id_usuario }}</td>
 
-                    <strong> {{ solicitacoes|length }} </strong>
-                </div>
-            </section>
+                <td>{{ usuario.nome }}</td>
 
-            <section class="painel">
-                <div class="cabecalho">
-                    <h2>Solicitações cadastradas</h2>
+                <td>{{ usuario.email }}</td>
 
-                    <a href="/solicitacao" class="botao"> + Nova solicitação </a>
-                </div>
+                <td>
+                    <a href="/usuario/editar/{{ usuario.id_usuario }}"> Editar </a>
 
-                {% if solicitacoes %}
+                    <form action="/usuario/excluir/{{ usuario.id_usuario }}" method="POST" style="display: inline">
+                        <button>Excluir</button>
+                    </form>
+                </td>
+            </tr>
 
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
+            {% endfor %}
+        </table>
 
-                            <th>Usuário</th>
+        {% else %}
 
-                            <th>Categoria</th>
+        <p>Nenhum usuário cadastrado.</p>
 
-                            <th>Descrição</th>
+        {% endif %}
 
-                            <th>Localização</th>
+        <hr />
 
-                            <th>Status</th>
-                        </tr>
-                    </thead>
+        <h2>Solicitações</h2>
 
-                    <tbody>
-                        {% for solicitacao in solicitacoes %}
+        {% if solicitacoes %}
 
-                        <tr>
-                            <td>{{ solicitacao.id_solicitacao }}</td>
+        <table border="1">
+            <tr>
+                <th>ID</th>
+                <th>Usuário</th>
+                <th>Categoria</th>
+                <th>Descrição</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
 
-                            <td>{{ solicitacao.usuario.nome }}</td>
+            {% for s in solicitacoes %}
 
-                            <td>{{ solicitacao.categoria.nome_categoria }}</td>
+            <tr>
+                <td>{{ s.id_solicitacao }}</td>
 
-                            <td>{{ solicitacao.descricao }}</td>
+                <td>{{ s.usuario.nome }}</td>
 
-                            <td>{{ solicitacao.localizacao }}</td>
+                <td>{{ s.categoria.nome_categoria }}</td>
 
-                            <td>
-                                <span class="status"> {{ solicitacao.status }} </span>
-                            </td>
-                        </tr>
+                <td>{{ s.descricao }}</td>
 
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <td>{{ s.status }}</td>
 
-                {% else %}
+                <td>
+                    <a href="/solicitacao/editar/{{ s.id_solicitacao }}"> Editar </a>
 
-                <div class="vazio">
-                    <h3>Nenhuma solicitação cadastrada.</h3>
+                    <form action="/solicitacao/excluir/{{ s.id_solicitacao }}" method="POST" style="display: inline">
+                        <button>Excluir</button>
+                    </form>
+                </td>
+            </tr>
 
-                    <p>Cadastre uma solicitação para começar.</p>
-                </div>
+            {% endfor %}
+        </table>
 
-                {% endif %}
-            </section>
-        </main>
+        {% else %}
+
+        <p>Nenhuma solicitação cadastrada.</p>
+
+        {% endif %}
     </body>
 </html>

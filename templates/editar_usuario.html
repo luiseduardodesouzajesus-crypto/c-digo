@@ -2,35 +2,35 @@
 <html lang="pt-BR">
     <head>
         <meta charset="UTF-8" />
-        <title>Novo usuário</title>
+        <title>Editar usuário</title>
     </head>
 
     <body>
-        <h1>Novo usuário</h1>
+        <h1>Editar usuário</h1>
 
         <form method="POST">
             <label>Nome:</label>
-            <input name="nome" required />
+            <input name="nome" value="{{ usuario.nome }}" required />
 
             <br /><br />
 
             <label>Telefone:</label>
-            <input name="telefone" />
+            <input name="telefone" value="{{ usuario.telefone }}" />
 
             <br /><br />
 
             <label>Cidade:</label>
-            <input name="cidade" />
+            <input name="cidade" value="{{ usuario.cidade }}" />
 
             <br /><br />
 
             <label>E-mail:</label>
-            <input type="email" name="email" required />
+            <input type="email" name="email" value="{{ usuario.email }}" required />
 
             <br /><br />
 
             <label>Senha:</label>
-            <input type="password" name="senha" required />
+            <input type="password" name="senha" value="{{ usuario.senha }}" required />
 
             <br /><br />
 
@@ -38,12 +38,13 @@
 
             <select name="tipo_usuario">
                 <option value="usuario">Usuário</option>
+
                 <option value="voluntario">Voluntário</option>
             </select>
 
             <br /><br />
 
-            <button type="submit">Salvar</button>
+            <button>Salvar alterações</button>
         </form>
 
         <br />

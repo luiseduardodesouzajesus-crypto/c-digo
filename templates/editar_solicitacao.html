@@ -2,18 +2,16 @@
 <html lang="pt-BR">
     <head>
         <meta charset="UTF-8" />
-        <title>Nova solicitação</title>
+        <title>Editar solicitação</title>
     </head>
 
     <body>
-        <h1>Nova solicitação</h1>
+        <h1>Editar solicitação</h1>
 
         <form method="POST">
             <label>Usuário:</label>
 
-            <select name="id_usuario" required>
-                <option value="">Selecione</option>
-
+            <select name="id_usuario">
                 {% for usuario in usuarios %}
 
                 <option value="{{ usuario.id_usuario }}">{{ usuario.nome }}</option>
@@ -25,9 +23,7 @@
 
             <label>Categoria:</label>
 
-            <select name="id_categoria" required>
-                <option value="">Selecione</option>
-
+            <select name="id_categoria">
                 {% for categoria in categorias %}
 
                 <option value="{{ categoria.id_categoria }}">{{ categoria.nome_categoria }}</option>
@@ -39,24 +35,35 @@
 
             <label>Descrição:</label>
 
-            <textarea name="descricao" required></textarea>
+            <textarea name="descricao" required>{{ solicitacao.descricao }}</textarea>
 
             <br /><br />
 
             <label>Localização:</label>
 
-            <input name="localizacao" />
+            <input name="localizacao" value="{{ solicitacao.localizacao }}" />
+
+            <br /><br />
+
+            <label>Status:</label>
+
+            <select name="status">
+                <option value="aberta">Aberta</option>
+                <option value="em andamento">Em andamento</option>
+                <option value="concluida">Concluída</option>
+            </select>
 
             <br /><br />
 
             <label>
                 <input type="checkbox" name="urgente" />
+
                 Urgente
             </label>
 
             <br /><br />
 
-            <button>Salvar</button>
+            <button>Salvar alterações</button>
         </form>
 
         <br />
