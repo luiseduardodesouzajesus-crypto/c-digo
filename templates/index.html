@@ -1,112 +1,115 @@
 <!doctype html>
 <html lang="pt-BR">
-    <head>
-        <meta charset="UTF-8" />
-        <title>Dispositivos Móveis</title>
-    </head>
 
-    <body>
-        <h1>Dispositivos Móveis</h1>
+<head>
+    <meta charset="UTF-8" />
+    <title>Dispositivos Móveis</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+</head>
 
-        <nav>
-            <a href="/">Início</a> | <a href="/usuario">Novo usuário</a> |
-            <a href="/solicitacao">Nova solicitação</a>
-        </nav>
+<body>
+    <h1>Dispositivos Móveis</h1>
 
-        <hr />
+    <nav>
+        <a href="/">Início</a> | <a href="/usuario">Novo usuário</a> |
+        <a href="/solicitacao">Nova solicitação</a>
+    </nav>
 
-        <h2>Resumo</h2>
+    <hr />
 
-        <p>Usuários: {{ usuarios|length }}</p>
-        <p>Categorias: {{ categorias|length }}</p>
-        <p>Solicitações: {{ solicitacoes|length }}</p>
+    <h2>Resumo</h2>
 
-        <hr />
+    <p>Usuários: {{ usuarios|length }}</p>
+    <p>Categorias: {{ categorias|length }}</p>
+    <p>Solicitações: {{ solicitacoes|length }}</p>
 
-        <h2>Usuários</h2>
+    <hr />
 
-        {% if usuarios %}
+    <h2>Usuários</h2>
 
-        <table border="1">
-            <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>E-mail</th>
-                <th>Ações</th>
-            </tr>
+    {% if usuarios %}
 
-            {% for usuario in usuarios %}
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>Ações</th>
+        </tr>
 
-            <tr>
-                <td>{{ usuario.id_usuario }}</td>
+        {% for usuario in usuarios %}
 
-                <td>{{ usuario.nome }}</td>
+        <tr>
+            <td>{{ usuario.id_usuario }}</td>
 
-                <td>{{ usuario.email }}</td>
+            <td>{{ usuario.nome }}</td>
 
-                <td>
-                    <a href="/usuario/editar/{{ usuario.id_usuario }}"> Editar </a>
+            <td>{{ usuario.email }}</td>
 
-                    <form action="/usuario/excluir/{{ usuario.id_usuario }}" method="POST" style="display: inline">
-                        <button>Excluir</button>
-                    </form>
-                </td>
-            </tr>
+            <td>
+                <a href="/usuario/editar/{{ usuario.id_usuario }}"> Editar </a>
 
-            {% endfor %}
-        </table>
+                <form action="/usuario/excluir/{{ usuario.id_usuario }}" method="POST" style="display: inline">
+                    <button type="submit" class="btn-excluir">Excluir</button>
+                </form>
+            </td>
+        </tr>
 
-        {% else %}
+        {% endfor %}
+    </table>
 
-        <p>Nenhum usuário cadastrado.</p>
+    {% else %}
 
-        {% endif %}
+    <p>Nenhum usuário cadastrado.</p>
 
-        <hr />
+    {% endif %}
 
-        <h2>Solicitações</h2>
+    <hr />
 
-        {% if solicitacoes %}
+    <h2>Solicitações</h2>
 
-        <table border="1">
-            <tr>
-                <th>ID</th>
-                <th>Usuário</th>
-                <th>Categoria</th>
-                <th>Descrição</th>
-                <th>Status</th>
-                <th>Ações</th>
-            </tr>
+    {% if solicitacoes %}
 
-            {% for s in solicitacoes %}
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Usuário</th>
+            <th>Categoria</th>
+            <th>Descrição</th>
+            <th>Status</th>
+            <th>Ações</th>
+        </tr>
 
-            <tr>
-                <td>{{ s.id_solicitacao }}</td>
+        {% for s in solicitacoes %}
 
-                <td>{{ s.usuario.nome }}</td>
+        <tr>
+            <td>{{ s.id_solicitacao }}</td>
 
-                <td>{{ s.categoria.nome_categoria }}</td>
+            <td>{{ s.usuario.nome }}</td>
 
-                <td>{{ s.descricao }}</td>
+            <td>{{ s.categoria.nome_categoria }}</td>
 
-                <td>{{ s.status }}</td>
+            <td>{{ s.descricao }}</td>
 
-                <td>
-                    <a href="/solicitacao/editar/{{ s.id_solicitacao }}"> Editar </a>
+            <td>{{ s.status }}</td>
 
-                    <form action="/solicitacao/excluir/{{ s.id_solicitacao }}" method="POST" style="display: inline">
-                        <button>Excluir</button>
-                    </form>
-                </td>
-            </tr>
+            <td>
+                <a href="/solicitacao/editar/{{ s.id_solicitacao }}"> Editar </a>
 
-            {% endfor %}
-        </table>
+                <form action="/solicitacao/excluir/{{ s.id_solicitacao }}" method="POST" style="display: inline">
+                    <button type="submit" class="btn-excluir">Excluir</button>
+                </form>
+            </td>
+        </tr>
 
-        {% else %}
+        {% endfor %}
+    </table>
 
-        <p>Nenhuma solicitação cadastrada.</p>
+    {% else %}
 
-        {% endif %}
-    </body>
+    <p>Nenhuma solicitação cadastrada.</p>
+
+    {% endif %}
+</body>
+
 </html>

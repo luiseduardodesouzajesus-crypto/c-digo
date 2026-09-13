@@ -1,66 +1,69 @@
 <!doctype html>
 <html lang="pt-BR">
-    <head>
-        <meta charset="UTF-8" />
-        <title>Nova solicitação</title>
-    </head>
 
-    <body>
-        <h1>Nova solicitação</h1>
+<head>
+    <meta charset="UTF-8" />
+    <title>Nova solicitação</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+</head>
 
-        <form method="POST">
-            <label>Usuário:</label>
+<body>
+    <h1>Nova solicitação</h1>
 
-            <select name="id_usuario" required>
-                <option value="">Selecione</option>
+    <form method="POST">
+        <label>Usuário:</label>
 
-                {% for usuario in usuarios %}
+        <select name="id_usuario" required>
+            <option value="">Selecione</option>
 
-                <option value="{{ usuario.id_usuario }}">{{ usuario.nome }}</option>
+            {% for usuario in usuarios %}
 
-                {% endfor %}
-            </select>
+            <option value="{{ usuario.id_usuario }}">{{ usuario.nome }}</option>
 
-            <br /><br />
+            {% endfor %}
+        </select>
 
-            <label>Categoria:</label>
+        <br /><br />
 
-            <select name="id_categoria" required>
-                <option value="">Selecione</option>
+        <label>Categoria:</label>
 
-                {% for categoria in categorias %}
+        <select name="id_categoria" required>
+            <option value="">Selecione</option>
 
-                <option value="{{ categoria.id_categoria }}">{{ categoria.nome_categoria }}</option>
+            {% for categoria in categorias %}
 
-                {% endfor %}
-            </select>
+            <option value="{{ categoria.id_categoria }}">{{ categoria.nome_categoria }}</option>
 
-            <br /><br />
+            {% endfor %}
+        </select>
 
-            <label>Descrição:</label>
+        <br /><br />
 
-            <textarea name="descricao" required></textarea>
+        <label>Descrição:</label>
 
-            <br /><br />
+        <textarea name="descricao" required></textarea>
 
-            <label>Localização:</label>
+        <br /><br />
 
-            <input name="localizacao" />
+        <label>Localização:</label>
 
-            <br /><br />
+        <input name="localizacao" />
 
-            <label>
-                <input type="checkbox" name="urgente" />
-                Urgente
-            </label>
+        <br /><br />
 
-            <br /><br />
+        <label>
+            <input type="checkbox" name="urgente" />
+            Urgente
+        </label>
 
-            <button>Salvar</button>
-        </form>
+        <br /><br />
 
-        <br />
+        <button>Salvar</button>
+    </form>
 
-        <a href="/">Voltar</a>
-    </body>
+    <br />
+
+    <a href="/">Voltar</a>
+</body>
+
 </html>
