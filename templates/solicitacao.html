@@ -2,65 +2,119 @@
 <html lang="pt-BR">
     <head>
         <meta charset="UTF-8" />
-        <title>Nova solicitação</title>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <title>Nova solicitação | AjudaAgora</title>
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
     </head>
 
     <body>
-        <h1>Nova solicitação</h1>
+        <header>
+            <div class="container header-content">
+                <a href="{{ url_for('index') }}" class="logo"> AjudaAgora </a>
 
-        <form method="POST">
-            <label>Usuário:</label>
+                <nav>
+                    <a href="{{ url_for('index') }}"> Início </a>
 
-            <select name="id_usuario" required>
-                <option value="">Selecione</option>
+                    <a href="{{ url_for('usuario') }}"> Usuários </a>
+                </nav>
+            </div>
+        </header>
 
-                {% for usuario in usuarios %}
+        <main class="container">
+            <section class="pagina-topo">
+                <span class="subtitulo"> AJUDA • CONEXÃO </span>
 
-                <option value="{{ usuario.id_usuario }}">{{ usuario.nome }}</option>
+                <h2>Nova solicitação</h2>
 
-                {% endfor %}
-            </select>
+                <p>Cadastre uma solicitação de ajuda.</p>
+            </section>
 
-            <br /><br />
+            <section class="form-card">
+                <form method="POST">
+                    <div class="form-grid">
+                        <!-- USUÁRIO -->
 
-            <label>Categoria:</label>
+                        <div>
+                            <label for="id_usuario"> Usuário </label>
 
-            <select name="id_categoria" required>
-                <option value="">Selecione</option>
+                            <select name="id_usuario" id="id_usuario" required>
+                                <option value="">Selecione o usuário</option>
 
-                {% for categoria in categorias %}
+                                {% for usuario in usuarios %}
 
-                <option value="{{ categoria.id_categoria }}">{{ categoria.nome_categoria }}</option>
+                                <option value="{{ usuario.id_usuario }}">{{ usuario.nome }}</option>
 
-                {% endfor %}
-            </select>
+                                {% endfor %}
+                            </select>
+                        </div>
 
-            <br /><br />
+                        <!-- CATEGORIA -->
 
-            <label>Descrição:</label>
+                        <div>
+                            <label for="id_categoria"> Categoria </label>
 
-            <textarea name="descricao" required></textarea>
+                            <select name="id_categoria" id="id_categoria" required>
+                                <option value="">Selecione a categoria</option>
 
-            <br /><br />
+                                {% for categoria in categorias %}
 
-            <label>Localização:</label>
+                                <option value="{{ categoria.id_categoria }}">{{ categoria.nome_categoria }}</option>
 
-            <input name="localizacao" />
+                                {% endfor %}
+                            </select>
+                        </div>
 
-            <br /><br />
+                        <!-- VOLUNTÁRIO -->
 
-            <label>
-                <input type="checkbox" name="urgente" />
-                Urgente
-            </label>
+                        <div>
+                            <label for="id_voluntario"> Voluntário </label>
 
-            <br /><br />
+                            <select name="id_voluntario" id="id_voluntario">
+                                <option value="">Ainda não definido</option>
 
-            <button>Salvar</button>
-        </form>
+                                {% for voluntario in voluntarios %}
 
-        <br />
+                                <option value="{{ voluntario.id_usuario }}">{{ voluntario.nome }}</option>
 
-        <a href="/">Voltar</a>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="campo-grande">
+                        <label for="descricao"> Descrição </label>
+
+                        <textarea name="descricao" id="descricao" placeholder="Explique o que você precisa..." required></textarea>
+                    </div>
+
+                    <div class="campo-grande">
+                        <label for="localizacao"> Localização </label>
+
+                        <input type="text" name="localizacao" id="localizacao" placeholder="Onde a ajuda é necessária?" />
+                    </div>
+
+                    <label class="checkbox">
+                        <input type="checkbox" name="urgente" />
+
+                        <span> Esta solicitação é urgente </span>
+                    </label>
+
+                    <div class="form-acoes">
+                        <a href="{{ url_for('index') }}" class="botao-secundario"> Cancelar </a>
+
+                        <button type="submit">Salvar solicitação</button>
+                    </div>
+                </form>
+            </section>
+        </main>
+
+        <footer>
+            <div class="container">
+                <p>AjudaAgora © 2026</p>
+            </div>
+        </footer>
     </body>
 </html>

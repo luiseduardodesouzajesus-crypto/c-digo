@@ -1,195 +1,400 @@
-from flask import Flask, render_template, request, redirect
-from sqlalchemy.exc import IntegrityError
-
-from database import db
-from model import Usuario, Categoria, Solicitacao
+from flask import Flask, render_template, request, redirect, url_for
+from model import db, Usuario, Categoria, Solicitacao
 
 
-def create_app():
+app = Flask(__name__)
 
-    app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///dados.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-    app.config["SECRET_KEY"] = "chave-do-projeto"
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///dispositivos.db"
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+db.init_app(app)
 
-    db.init_app(app)
 
-    with app.app_context():
-        db.create_all()
-        criar_categorias()
+# =========================
+# BANCO DE DADOS
+# =========================
 
-    @app.route("/")
-    def index():
+with app.app_context():
 
-        usuarios = Usuario.query.all()
-        categorias = Categoria.query.all()
-        solicitacoes = Solicitacao.query.order_by(
-            Solicitacao.id_solicitacao.desc()
-        ).all()
+    db.create_all()
 
-        return render_template(
-            "index.html",
-            usuarios=usuarios,
-            categorias=categorias,
-            solicitacoes=solicitacoes
-        )
+    categorias_padrao = [
+        ("Alimentação", "Ajuda com alimentação"),
+        ("Transporte", "Ajuda com transporte"),
+        ("Educação", "Ajuda com estudos"),
+        ("Saúde", "Ajuda relacionada à saúde")
+    ]
 
-    @app.route("/usuario", methods=["GET", "POST"])
-    def usuario():
+    for nome, descricao in categorias_padrao:
 
-        if request.method == "POST":
+        if not Categoria.query.filter_by(
+            nome_categoria=nome
+        ).first():
 
-            novo = Usuario(
-                nome=request.form["nome"],
-                telefone=request.form["telefone"],
-                cidade=request.form["cidade"],
-                email=request.form["email"],
-                senha=request.form["senha"],
-                tipo_usuario=request.form["tipo_usuario"]
+            db.session.add(
+                Categoria(
+                    nome_categoria=nome,
+                    descricao=descricao
+                )
             )
 
-            try:
-                db.session.add(novo)
-                db.session.commit()
-            except IntegrityError:
-                db.session.rollback()
-                return "E-mail já cadastrado."
+    db.session.commit()
 
-            return redirect("/")
 
-        return render_template("usuario.html")
+# =========================
+# INÍCIO
+# =========================
 
-    @app.route("/usuario/editar/<int:id>", methods=["GET", "POST"])
-    def editar_usuario(id):
+@app.route("/")
+def index():
 
-        usuario = Usuario.query.get_or_404(id)
+    usuarios = Usuario.query.all()
 
-        if request.method == "POST":
+    categorias = Categoria.query.all()
 
-            usuario.nome = request.form["nome"]
-            usuario.telefone = request.form["telefone"]
-            usuario.cidade = request.form["cidade"]
-            usuario.email = request.form["email"]
-            usuario.senha = request.form["senha"]
-            usuario.tipo_usuario = request.form["tipo_usuario"]
+    solicitacoes = Solicitacao.query.all()
 
-            try:
-                db.session.commit()
-            except IntegrityError:
-                db.session.rollback()
-                return "E-mail já cadastrado."
+    return render_template(
+        "index.html",
+        usuarios=usuarios,
+        categorias=categorias,
+        solicitacoes=solicitacoes
+    )
 
-            return redirect("/")
 
-        return render_template(
-            "editar_usuario.html",
-            usuario=usuario
+# =========================
+# USUÁRIOS
+# =========================
+
+@app.route("/usuario", methods=["GET", "POST"])
+def usuario():
+
+    if request.method == "POST":
+
+        nome = request.form["nome"]
+        telefone = request.form.get("telefone")
+        cidade = request.form.get("cidade")
+        email = request.form["email"]
+        senha = request.form["senha"]
+        tipo_usuario = request.form["tipo_usuario"]
+
+        if Usuario.query.filter_by(email=email).first():
+
+            return "E-mail já cadastrado."
+
+        novo_usuario = Usuario(
+            nome=nome,
+            telefone=telefone,
+            cidade=cidade,
+            email=email,
+            senha=senha,
+            tipo_usuario=tipo_usuario
         )
 
-    @app.route("/usuario/excluir/<int:id>", methods=["POST"])
-    def excluir_usuario(id):
-
-        usuario = Usuario.query.get_or_404(id)
-
-        db.session.delete(usuario)
-        db.session.commit()
-
-        return redirect("/")
-
-    @app.route("/solicitacao", methods=["GET", "POST"])
-    def solicitacao():
-
-        usuarios = Usuario.query.all()
-        categorias = Categoria.query.all()
-
-        if request.method == "POST":
-
-            nova = Solicitacao(
-                descricao=request.form["descricao"],
-                localizacao=request.form["localizacao"],
-                urgente="urgente" in request.form,
-                status="aberta",
-                id_usuario=int(request.form["id_usuario"]),
-                id_categoria=int(request.form["id_categoria"])
-            )
-
-            db.session.add(nova)
-            db.session.commit()
-
-            return redirect("/")
-
-        return render_template(
-            "solicitacao.html",
-            usuarios=usuarios,
-            categorias=categorias
-        )
-
-    @app.route("/solicitacao/editar/<int:id>", methods=["GET", "POST"])
-    def editar_solicitacao(id):
-
-        solicitacao = Solicitacao.query.get_or_404(id)
-
-        if request.method == "POST":
-
-            solicitacao.descricao = request.form["descricao"]
-            solicitacao.localizacao = request.form["localizacao"]
-            solicitacao.urgente = "urgente" in request.form
-            solicitacao.status = request.form["status"]
-            solicitacao.id_usuario = int(request.form["id_usuario"])
-            solicitacao.id_categoria = int(request.form["id_categoria"])
-
-            db.session.commit()
-
-            return redirect("/")
-
-        return render_template(
-            "editar_solicitacao.html",
-            solicitacao=solicitacao,
-            usuarios=Usuario.query.all(),
-            categorias=Categoria.query.all()
-        )
-
-    @app.route("/solicitacao/excluir/<int:id>", methods=["POST"])
-    def excluir_solicitacao(id):
-
-        solicitacao = Solicitacao.query.get_or_404(id)
-
-        db.session.delete(solicitacao)
-        db.session.commit()
-
-        return redirect("/")
-
-    return app
-
-
-def criar_categorias():
-
-    if Categoria.query.count() == 0:
-
-        db.session.add_all([
-            Categoria(
-                nome_categoria="Alimentação",
-                descricao="Necessidades de alimentação."
-            ),
-            Categoria(
-                nome_categoria="Transporte",
-                descricao="Necessidades de transporte."
-            ),
-            Categoria(
-                nome_categoria="Educação",
-                descricao="Necessidades de educação."
-            ),
-            Categoria(
-                nome_categoria="Saúde",
-                descricao="Necessidades de saúde."
-            )
-        ])
+        db.session.add(novo_usuario)
 
         db.session.commit()
 
+        return redirect(url_for("usuario"))
 
-app = create_app()
+    usuarios = Usuario.query.all()
+
+    return render_template(
+        "usuario.html",
+        usuarios=usuarios
+    )
+
+
+# =========================
+# EDITAR USUÁRIO
+# =========================
+
+@app.route(
+    "/editar_usuario/<int:id>",
+    methods=["GET", "POST"]
+)
+def editar_usuario(id):
+
+    usuario = db.session.get(
+        Usuario,
+        id
+    )
+
+    if not usuario:
+
+        return "Usuário não encontrado."
+
+    if request.method == "POST":
+
+        usuario.nome = request.form["nome"]
+
+        usuario.telefone = request.form.get(
+            "telefone"
+        )
+
+        usuario.cidade = request.form.get(
+            "cidade"
+        )
+
+        usuario.email = request.form["email"]
+
+        usuario.senha = request.form["senha"]
+
+        usuario.tipo_usuario = request.form[
+            "tipo_usuario"
+        ]
+
+        db.session.commit()
+
+        return redirect(url_for("usuario"))
+
+    return render_template(
+        "editar_usuario.html",
+        usuario=usuario
+    )
+
+
+# =========================
+# EXCLUIR USUÁRIO
+# =========================
+
+@app.route("/excluir_usuario/<int:id>")
+def excluir_usuario(id):
+
+    usuario = db.session.get(
+        Usuario,
+        id
+    )
+
+    if not usuario:
+
+        return "Usuário não encontrado."
+
+    # Verifica se ele possui solicitações
+    solicitacoes = Solicitacao.query.filter(
+        (Solicitacao.id_usuario == id) |
+        (Solicitacao.id_voluntario == id)
+    ).all()
+
+    if solicitacoes:
+
+        return (
+            "Não é possível excluir este usuário "
+            "porque ele está relacionado a uma ou "
+            "mais solicitações."
+        )
+
+    db.session.delete(usuario)
+
+    db.session.commit()
+
+    return redirect(url_for("usuario"))
+
+
+# =========================
+# NOVA SOLICITAÇÃO
+# =========================
+
+@app.route(
+    "/solicitacao",
+    methods=["GET", "POST"]
+)
+def solicitacao():
+
+    # SOMENTE usuários comuns
+    usuarios = Usuario.query.filter_by(
+        tipo_usuario="usuario"
+    ).all()
+
+    # SOMENTE voluntários
+    voluntarios = Usuario.query.filter_by(
+        tipo_usuario="voluntario"
+    ).all()
+
+    categorias = Categoria.query.all()
+
+    if request.method == "POST":
+
+        descricao = request.form["descricao"]
+
+        localizacao = request.form.get(
+            "localizacao"
+        )
+
+        urgente = (
+            "urgente" in request.form
+        )
+
+        id_usuario = request.form[
+            "id_usuario"
+        ]
+
+        id_categoria = request.form[
+            "id_categoria"
+        ]
+
+        id_voluntario = request.form.get(
+            "id_voluntario"
+        )
+
+        if id_voluntario == "":
+            id_voluntario = None
+
+        nova_solicitacao = Solicitacao(
+
+            descricao=descricao,
+
+            localizacao=localizacao,
+
+            urgente=urgente,
+
+            id_usuario=id_usuario,
+
+            id_categoria=id_categoria,
+
+            id_voluntario=id_voluntario
+
+        )
+
+        db.session.add(
+            nova_solicitacao
+        )
+
+        db.session.commit()
+
+        return redirect(
+            url_for("index")
+        )
+
+    return render_template(
+        "solicitacao.html",
+
+        usuarios=usuarios,
+
+        voluntarios=voluntarios,
+
+        categorias=categorias
+    )
+
+
+# =========================
+# EDITAR SOLICITAÇÃO
+# =========================
+
+@app.route(
+    "/editar_solicitacao/<int:id>",
+    methods=["GET", "POST"]
+)
+def editar_solicitacao(id):
+
+    solicitacao = db.session.get(
+        Solicitacao,
+        id
+    )
+
+    if not solicitacao:
+
+        return "Solicitação não encontrada."
+
+    # Somente usuários
+    usuarios = Usuario.query.filter_by(
+        tipo_usuario="usuario"
+    ).all()
+
+    # Somente voluntários
+    voluntarios = Usuario.query.filter_by(
+        tipo_usuario="voluntario"
+    ).all()
+
+    categorias = Categoria.query.all()
+
+    if request.method == "POST":
+
+        solicitacao.descricao = request.form[
+            "descricao"
+        ]
+
+        solicitacao.localizacao = request.form.get(
+            "localizacao"
+        )
+
+        solicitacao.urgente = (
+            "urgente" in request.form
+        )
+
+        solicitacao.id_usuario = request.form[
+            "id_usuario"
+        ]
+
+        solicitacao.id_categoria = request.form[
+            "id_categoria"
+        ]
+
+        solicitacao.status = request.form[
+            "status"
+        ]
+
+        id_voluntario = request.form.get(
+            "id_voluntario"
+        )
+
+        if id_voluntario == "":
+            id_voluntario = None
+
+        solicitacao.id_voluntario = id_voluntario
+
+        db.session.commit()
+
+        return redirect(
+            url_for("index")
+        )
+
+    return render_template(
+        "editar_solicitacao.html",
+
+        solicitacao=solicitacao,
+
+        usuarios=usuarios,
+
+        voluntarios=voluntarios,
+
+        categorias=categorias
+    )
+
+
+# =========================
+# EXCLUIR SOLICITAÇÃO
+# =========================
+
+@app.route(
+    "/excluir_solicitacao/<int:id>"
+)
+def excluir_solicitacao(id):
+
+    solicitacao = db.session.get(
+        Solicitacao,
+        id
+    )
+
+    if not solicitacao:
+
+        return "Solicitação não encontrada."
+
+    db.session.delete(
+        solicitacao
+    )
+
+    db.session.commit()
+
+    return redirect(
+        url_for("index")
+    )
+
+
+# =========================
+# EXECUTAR
+# =========================
 
 if __name__ == "__main__":
+
     app.run(debug=True)

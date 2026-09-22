@@ -2,111 +2,152 @@
 <html lang="pt-BR">
     <head>
         <meta charset="UTF-8" />
-        <title>Dispositivos Móveis</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <title>AjudaAgora</title>
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
     </head>
 
     <body>
-        <h1>Dispositivos Móveis</h1>
+        <header>
+            <div class="container header-content">
+                <a href="{{ url_for('index') }}" class="logo"> AjudaAgora </a>
 
-        <nav>
-            <a href="/">Início</a> | <a href="/usuario">Novo usuário</a> |
-            <a href="/solicitacao">Nova solicitação</a>
-        </nav>
+                <nav>
+                    <a href="{{ url_for('index') }}" class="ativo"> Início </a>
 
-        <hr />
+                    <a href="{{ url_for('usuario') }}"> Usuários </a>
+                </nav>
+            </div>
+        </header>
 
-        <h2>Resumo</h2>
+        <main class="container">
+            <!-- APRESENTAÇÃO -->
 
-        <p>Usuários: {{ usuarios|length }}</p>
-        <p>Categorias: {{ categorias|length }}</p>
-        <p>Solicitações: {{ solicitacoes|length }}</p>
+            <section class="boas-vindas">
+                <div class="boas-texto">
+                    <span class="tag">AJUDA • CONEXÃO • COMUNIDADE</span>
 
-        <hr />
+                    <h1>
+                        Encontre ajuda.<br />
+                        <span>Ajude alguém.</span>
+                    </h1>
 
-        <h2>Usuários</h2>
+                    <p>O AjudaAgora conecta pessoas que precisam de ajuda com quem pode ajudar.</p>
+                </div>
 
-        {% if usuarios %}
+                <a href="{{ url_for('solicitacao') }}" class="botao-principal"> + Adicionar solicitação </a>
+            </section>
 
-        <table border="1">
-            <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>E-mail</th>
-                <th>Ações</th>
-            </tr>
+            <!-- RESUMO -->
 
-            {% for usuario in usuarios %}
+            <section class="resumo">
+                <div class="resumo-card">
+                    <div class="icone">👥</div>
 
-            <tr>
-                <td>{{ usuario.id_usuario }}</td>
+                    <div>
+                        <strong>{{ usuarios|length }}</strong>
+                        <span>Usuários</span>
+                    </div>
+                </div>
 
-                <td>{{ usuario.nome }}</td>
+                <div class="resumo-card">
+                    <div class="icone">📂</div>
 
-                <td>{{ usuario.email }}</td>
+                    <div>
+                        <strong>{{ categorias|length }}</strong>
+                        <span>Categorias</span>
+                    </div>
+                </div>
 
-                <td>
-                    <a href="/usuario/editar/{{ usuario.id_usuario }}"> Editar </a>
+                <div class="resumo-card">
+                    <div class="icone">📋</div>
 
-                    <form action="/usuario/excluir/{{ usuario.id_usuario }}" method="POST" style="display: inline">
-                        <button>Excluir</button>
-                    </form>
-                </td>
-            </tr>
+                    <div>
+                        <strong>{{ solicitacoes|length }}</strong>
+                        <span>Solicitações</span>
+                    </div>
+                </div>
+            </section>
 
-            {% endfor %}
-        </table>
+            <!-- SOLICITAÇÕES -->
 
-        {% else %}
+            <section class="secao-solicitacoes">
+                <div class="cabecalho-secao">
+                    <div>
+                        <span class="subtitulo">ATIVIDADE</span>
 
-        <p>Nenhum usuário cadastrado.</p>
+                        <h2>Solicitações recentes</h2>
 
-        {% endif %}
+                        <p>Veja as solicitações cadastradas no AjudaAgora.</p>
+                    </div>
+                </div>
 
-        <hr />
+                {% if solicitacoes %}
 
-        <h2>Solicitações</h2>
+                <div class="lista-solicitacoes">
+                    {% for s in solicitacoes %}
 
-        {% if solicitacoes %}
+                    <article class="solicitacao">
+                        <div class="solicitacao-conteudo">
+                            <div class="solicitacao-cabecalho">
+                                <span class="categoria"> {{ s.categoria.nome_categoria }} </span>
 
-        <table border="1">
-            <tr>
-                <th>ID</th>
-                <th>Usuário</th>
-                <th>Categoria</th>
-                <th>Descrição</th>
-                <th>Status</th>
-                <th>Ações</th>
-            </tr>
+                                <span class="status"> {{ s.status }} </span>
+                            </div>
 
-            {% for s in solicitacoes %}
+                            <h3>{{ s.descricao }}</h3>
 
-            <tr>
-                <td>{{ s.id_solicitacao }}</td>
+                            <div class="informacoes">
+                                <span> 👤 {{ s.usuario.nome }} </span>
 
-                <td>{{ s.usuario.nome }}</td>
+                                {% if s.localizacao %}
+                                <span> 📍 {{ s.localizacao }} </span>
+                                {% endif %}
+                            </div>
+                        </div>
 
-                <td>{{ s.categoria.nome_categoria }}</td>
+                        <div class="solicitacao-acoes">
+                            <a
+                                href="{{ url_for('editar_solicitacao',
+                                        id=s.id_solicitacao) }}"
+                                class="acao-editar"
+                            >
+                                Editar
+                            </a>
 
-                <td>{{ s.descricao }}</td>
+                            <a
+                                href="{{ url_for('excluir_solicitacao',
+                                        id=s.id_solicitacao) }}"
+                                class="acao-excluir"
+                            >
+                                Excluir
+                            </a>
+                        </div>
+                    </article>
 
-                <td>{{ s.status }}</td>
+                    {% endfor %}
+                </div>
 
-                <td>
-                    <a href="/solicitacao/editar/{{ s.id_solicitacao }}"> Editar </a>
+                {% else %}
 
-                    <form action="/solicitacao/excluir/{{ s.id_solicitacao }}" method="POST" style="display: inline">
-                        <button>Excluir</button>
-                    </form>
-                </td>
-            </tr>
+                <div class="sem-solicitacoes">
+                    <div class="sem-icone">📋</div>
 
-            {% endfor %}
-        </table>
+                    <h3>Nenhuma solicitação ainda</h3>
 
-        {% else %}
+                    <p>Quando uma solicitação for cadastrada, ela aparecerá aqui.</p>
+                </div>
 
-        <p>Nenhuma solicitação cadastrada.</p>
+                {% endif %}
+            </section>
+        </main>
 
-        {% endif %}
+        <footer>
+            <div class="container">
+                <p>AjudaAgora © 2026</p>
+            </div>
+        </footer>
     </body>
 </html>

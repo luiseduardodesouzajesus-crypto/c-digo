@@ -1,73 +1,358 @@
-<!doctype html>
-<html lang="pt-BR">
-    <head>
-        <meta charset="UTF-8" />
-        <title>Editar solicitação</title>
-    </head>
+<!DOCTYPE html>
 
-    <body>
-        <h1>Editar solicitação</h1>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Editar solicitação | AjudaAgora
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="container header-content">
+
+        <a
+            href="{{ url_for('index') }}"
+            class="logo"
+        >
+            AjudaAgora
+        </a>
+
+
+        <nav>
+
+            <a href="{{ url_for('index') }}">
+                Início
+            </a>
+
+            <a href="{{ url_for('usuario') }}">
+                Usuários
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>
+
+
+
+<main class="container">
+
+
+    <section class="pagina-topo">
+
+        <span class="subtitulo">
+            SOLICITAÇÕES
+        </span>
+
+        <h2>
+            Editar solicitação
+        </h2>
+
+        <p>
+            Altere as informações desta solicitação.
+        </p>
+
+    </section>
+
+
+
+    <section class="form-card">
+
 
         <form method="POST">
-            <label>Usuário:</label>
 
-            <select name="id_usuario">
-                {% for usuario in usuarios %}
 
-                <option value="{{ usuario.id_usuario }}">{{ usuario.nome }}</option>
+            <div class="form-grid">
 
-                {% endfor %}
-            </select>
 
-            <br /><br />
+                <!-- USUÁRIO -->
 
-            <label>Categoria:</label>
+                <div>
 
-            <select name="id_categoria">
-                {% for categoria in categorias %}
+                    <label for="id_usuario">
+                        Usuário
+                    </label>
 
-                <option value="{{ categoria.id_categoria }}">{{ categoria.nome_categoria }}</option>
 
-                {% endfor %}
-            </select>
+                    <select
+                        name="id_usuario"
+                        id="id_usuario"
+                        required
+                    >
 
-            <br /><br />
+                        {% for usuario in usuarios %}
 
-            <label>Descrição:</label>
+                        <option
+                            value="{{ usuario.id_usuario }}"
+                            {% if solicitacao.id_usuario == usuario.id_usuario %}
+                            selected
+                            {% endif %}
+                        >
 
-            <textarea name="descricao" required>{{ solicitacao.descricao }}</textarea>
+                            {{ usuario.nome }}
 
-            <br /><br />
+                        </option>
 
-            <label>Localização:</label>
+                        {% endfor %}
 
-            <input name="localizacao" value="{{ solicitacao.localizacao }}" />
+                    </select>
 
-            <br /><br />
+                </div>
 
-            <label>Status:</label>
 
-            <select name="status">
-                <option value="aberta">Aberta</option>
-                <option value="em andamento">Em andamento</option>
-                <option value="concluida">Concluída</option>
-            </select>
 
-            <br /><br />
+                <!-- CATEGORIA -->
 
-            <label>
-                <input type="checkbox" name="urgente" />
+                <div>
 
-                Urgente
+                    <label for="id_categoria">
+                        Categoria
+                    </label>
+
+
+                    <select
+                        name="id_categoria"
+                        id="id_categoria"
+                        required
+                    >
+
+                        {% for categoria in categorias %}
+
+                        <option
+                            value="{{ categoria.id_categoria }}"
+                            {% if solicitacao.id_categoria == categoria.id_categoria %}
+                            selected
+                            {% endif %}
+                        >
+
+                            {{ categoria.nome_categoria }}
+
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- VOLUNTÁRIO -->
+
+                <div>
+
+                    <label for="id_voluntario">
+                        Voluntário
+                    </label>
+
+
+                    <select
+                        name="id_voluntario"
+                        id="id_voluntario"
+                    >
+
+                        <option value="">
+                            Nenhum voluntário
+                        </option>
+
+
+                        {% for voluntario in voluntarios %}
+
+                        <option
+                            value="{{ voluntario.id_usuario }}"
+                            {% if solicitacao.id_voluntario == voluntario.id_usuario %}
+                            selected
+                            {% endif %}
+                        >
+
+                            {{ voluntario.nome }}
+
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- STATUS -->
+
+                <div>
+
+                    <label for="status">
+                        Status
+                    </label>
+
+
+                    <select
+                        name="status"
+                        id="status"
+                    >
+
+                        <option
+                            value="aberta"
+                            {% if solicitacao.status == "aberta" %}
+                            selected
+                            {% endif %}
+                        >
+                            Aberta
+                        </option>
+
+
+                        <option
+                            value="em andamento"
+                            {% if solicitacao.status == "em andamento" %}
+                            selected
+                            {% endif %}
+                        >
+                            Em andamento
+                        </option>
+
+
+                        <option
+                            value="concluida"
+                            {% if solicitacao.status == "concluida" %}
+                            selected
+                            {% endif %}
+                        >
+                            Concluída
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- DESCRIÇÃO -->
+
+            <div class="campo-grande">
+
+                <label for="descricao">
+                    Descrição
+                </label>
+
+
+                <textarea
+                    name="descricao"
+                    id="descricao"
+                    required
+                >{{ solicitacao.descricao }}</textarea>
+
+            </div>
+
+
+
+            <!-- LOCALIZAÇÃO -->
+
+            <div class="campo-grande">
+
+                <label for="localizacao">
+                    Localização
+                </label>
+
+
+                <input
+                    type="text"
+                    name="localizacao"
+                    id="localizacao"
+                    value="{{ solicitacao.localizacao or '' }}"
+                >
+
+            </div>
+
+
+
+            <!-- URGENTE -->
+
+            <label class="checkbox">
+
+                <input
+                    type="checkbox"
+                    name="urgente"
+                    {% if solicitacao.urgente %}
+                    checked
+                    {% endif %}
+                >
+
+                <span>
+                    Esta solicitação é urgente
+                </span>
+
             </label>
 
-            <br /><br />
 
-            <button>Salvar alterações</button>
+
+            <!-- BOTÕES -->
+
+            <div class="form-acoes">
+
+
+                <a
+                    href="{{ url_for('index') }}"
+                    class="botao-secundario"
+                >
+                    Cancelar
+                </a>
+
+
+                <button type="submit">
+                    Salvar alterações
+                </button>
+
+
+            </div>
+
+
         </form>
 
-        <br />
 
-        <a href="/">Voltar</a>
-    </body>
+    </section>
+
+
+</main>
+
+
+
+<footer>
+
+    <div class="container">
+
+        <p>
+            AjudaAgora © 2026
+        </p>
+
+    </div>
+
+</footer>
+
+
+</body>
+
 </html>

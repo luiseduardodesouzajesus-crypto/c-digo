@@ -1,10 +1,12 @@
 from datetime import datetime
+from flask_sqlalchemy import SQLAlchemy
 
-from database import db
+db = SQLAlchemy()
 
 
 class Usuario(db.Model):
-    __tablename__ = "usuario"
+
+    __tablename__ = "usuarios"
 
     id_usuario = db.Column(
         db.Integer,
@@ -12,7 +14,7 @@ class Usuario(db.Model):
     )
 
     nome = db.Column(
-        db.String(100),
+        db.String(120),
         nullable=False
     )
 
@@ -21,11 +23,11 @@ class Usuario(db.Model):
     )
 
     cidade = db.Column(
-        db.String(100)
+        db.String(80)
     )
 
     email = db.Column(
-        db.String(120),
+        db.String(150),
         unique=True,
         nullable=False
     )
@@ -45,14 +47,24 @@ class Usuario(db.Model):
         default=datetime.utcnow
     )
 
+    # Solicitações feitas pelo usuário
     solicitacoes = db.relationship(
         "Solicitacao",
+        foreign_keys="Solicitacao.id_usuario",
         back_populates="usuario"
+    )
+
+    # Solicitações atendidas pelo voluntário
+    solicitacoes_voluntario = db.relationship(
+        "Solicitacao",
+        foreign_keys="Solicitacao.id_voluntario",
+        back_populates="voluntario"
     )
 
 
 class Categoria(db.Model):
-    __tablename__ = "categoria"
+
+    __tablename__ = "categorias"
 
     id_categoria = db.Column(
         db.Integer,
@@ -60,12 +72,13 @@ class Categoria(db.Model):
     )
 
     nome_categoria = db.Column(
-        db.String(100),
+        db.String(80),
+        unique=True,
         nullable=False
     )
 
     descricao = db.Column(
-        db.Text
+        db.String(255)
     )
 
     solicitacoes = db.relationship(
@@ -75,7 +88,8 @@ class Categoria(db.Model):
 
 
 class Solicitacao(db.Model):
-    __tablename__ = "solicitacao"
+
+    __tablename__ = "solicitacoes"
 
     id_solicitacao = db.Column(
         db.Integer,
@@ -106,21 +120,36 @@ class Solicitacao(db.Model):
         default=datetime.utcnow
     )
 
+    # Usuário que fez a solicitação
     id_usuario = db.Column(
         db.Integer,
-        db.ForeignKey("usuario.id_usuario"),
+        db.ForeignKey("usuarios.id_usuario"),
         nullable=False
+    )
+
+    # Voluntário que irá atender
+    id_voluntario = db.Column(
+        db.Integer,
+        db.ForeignKey("usuarios.id_usuario"),
+        nullable=True
     )
 
     id_categoria = db.Column(
         db.Integer,
-        db.ForeignKey("categoria.id_categoria"),
+        db.ForeignKey("categorias.id_categoria"),
         nullable=False
     )
 
     usuario = db.relationship(
         "Usuario",
+        foreign_keys=[id_usuario],
         back_populates="solicitacoes"
+    )
+
+    voluntario = db.relationship(
+        "Usuario",
+        foreign_keys=[id_voluntario],
+        back_populates="solicitacoes_voluntario"
     )
 
     categoria = db.relationship(

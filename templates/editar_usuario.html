@@ -2,53 +2,241 @@
 <html lang="pt-BR">
     <head>
         <meta charset="UTF-8" />
-        <title>Editar usuário</title>
+
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+        />
+
+        <title>Editar usuário | AjudaAgora</title>
+
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='css/style.css') }}"
+        />
     </head>
 
     <body>
-        <h1>Editar usuário</h1>
 
-        <form method="POST">
-            <label>Nome:</label>
-            <input name="nome" value="{{ usuario.nome }}" required />
+        <header>
+            <div class="container header-content">
 
-            <br /><br />
+                <a
+                    href="{{ url_for('index') }}"
+                    class="logo"
+                >
+                    AjudaAgora
+                </a>
 
-            <label>Telefone:</label>
-            <input name="telefone" value="{{ usuario.telefone }}" />
+                <nav>
 
-            <br /><br />
+                    <a href="{{ url_for('index') }}">
+                        Início
+                    </a>
 
-            <label>Cidade:</label>
-            <input name="cidade" value="{{ usuario.cidade }}" />
+                    <a href="{{ url_for('usuario') }}">
+                        Usuários
+                    </a>
 
-            <br /><br />
+                </nav>
 
-            <label>E-mail:</label>
-            <input type="email" name="email" value="{{ usuario.email }}" required />
+            </div>
+        </header>
 
-            <br /><br />
 
-            <label>Senha:</label>
-            <input type="password" name="senha" value="{{ usuario.senha }}" required />
+        <main class="container">
 
-            <br /><br />
+            <section class="pagina-topo">
 
-            <label>Tipo:</label>
+                <span class="subtitulo">
+                    USUÁRIOS
+                </span>
 
-            <select name="tipo_usuario">
-                <option value="usuario">Usuário</option>
+                <h2>
+                    Editar usuário
+                </h2>
 
-                <option value="voluntario">Voluntário</option>
-            </select>
+                <p>
+                    Altere as informações deste usuário.
+                </p>
 
-            <br /><br />
+            </section>
 
-            <button>Salvar alterações</button>
-        </form>
 
-        <br />
+            <section class="form-card">
 
-        <a href="/">Voltar</a>
+                <form method="POST">
+
+                    <div class="form-grid">
+
+                        <!-- NOME -->
+
+                        <div>
+
+                            <label for="nome">
+                                Nome
+                            </label>
+
+                            <input
+                                type="text"
+                                name="nome"
+                                id="nome"
+                                value="{{ usuario.nome }}"
+                                required
+                            />
+
+                        </div>
+
+
+                        <!-- TELEFONE -->
+
+                        <div>
+
+                            <label for="telefone">
+                                Telefone
+                            </label>
+
+                            <input
+                                type="text"
+                                name="telefone"
+                                id="telefone"
+                                value="{{ usuario.telefone or '' }}"
+                            />
+
+                        </div>
+
+
+                        <!-- CIDADE -->
+
+                        <div>
+
+                            <label for="cidade">
+                                Cidade
+                            </label>
+
+                            <input
+                                type="text"
+                                name="cidade"
+                                id="cidade"
+                                value="{{ usuario.cidade or '' }}"
+                            />
+
+                        </div>
+
+
+                        <!-- E-MAIL -->
+
+                        <div>
+
+                            <label for="email">
+                                E-mail
+                            </label>
+
+                            <input
+                                type="email"
+                                name="email"
+                                id="email"
+                                value="{{ usuario.email }}"
+                                required
+                            />
+
+                        </div>
+
+
+                        <!-- SENHA -->
+
+                        <div>
+
+                            <label for="senha">
+                                Senha
+                            </label>
+
+                            <input
+                                type="password"
+                                name="senha"
+                                id="senha"
+                                value="{{ usuario.senha }}"
+                                required
+                            />
+
+                        </div>
+
+
+                        <!-- TIPO DE USUÁRIO -->
+
+                        <div>
+
+                            <label for="tipo_usuario">
+                                Tipo de usuário
+                            </label>
+
+                            <select
+                                name="tipo_usuario"
+                                id="tipo_usuario"
+                                required
+                            >
+
+                                <option
+                                    value="usuario"
+                                    {% if usuario.tipo_usuario == "usuario" %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    Usuário
+                                </option>
+
+
+                                <option
+                                    value="voluntario"
+                                    {% if usuario.tipo_usuario == "voluntario" %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    Voluntário
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- BOTÕES -->
+
+                    <div class="form-acoes">
+
+                        <a
+                            href="{{ url_for('index') }}"
+                            class="botao-secundario"
+                        >
+                            Cancelar
+                        </a>
+
+                        <button type="submit">
+                            Salvar alterações
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+        </main>
+
+
+        <footer>
+
+            <div class="container">
+
+                <p>
+                    AjudaAgora © 2026
+                </p>
+
+            </div>
+
+        </footer>
+
     </body>
 </html>
